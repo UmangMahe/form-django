@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <title>Internship Assessment</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    h2 {
+        color: #000000;
+        text-align: center;
+        margin-top: 30px;
+        font-family: Sans-serif;
+    }
+    
+    form {
+        max-width: 300px;
+        margin: auto;
+        margin-top: 50px;
+    }
+    
+    .btn {
+        margin-top: 10px;
+        margin-right: 10px;
+    }
+</style>
+
+<body>
+
+    <div class="container">
+        <h2>Internship Assessment</h2>
+        <form id="form" , method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" placeholder="Enter email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" placeholder="Enter password" name="pswd">
+            </div>
+            <input type="submit" class="btn btn-primary" value="Submit" name="submit_post" onclick='submitpost()'>
+            <input type="submit" class="btn btn-primary" value="AJAX Submit" name="submit_ajax" onclick='submitajax()'>
+        </form>
+
+        <div id="output">
+
+        </div>
+    </div>
+    {% block javascript %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        function submitpost() {
+            document.getElementById("form").submit();
+        }
+
+        function submitajax() {
+            // catch the form's submit event
+            $('#form').submit(function(e) {
+
+                // create an AJAX call
+                $.ajax({
+                    data: $(this).serialize(), // get the form data
+                    type: $(this).attr('method'), // GET or POST
+                    url: "{% url 'form' %}",
+                    // on success
+                    success: function(response) {
+                        alert(response.msg);
+                        window.location.reload();
+                    },
+                    // on error
+                    error: function(response) {
+                        // alert the error if any error occured
+                        alert(response.responseJSON.errors);
+                        console.log(response.responseJSON.errors)
+                        window.location.reload();
+                    }
+                });
+                return false;
+
+            });
+        }
+    </script>
+    {% endblock javascript %} {% if messages %} {% for message in messages %}
+    <script>
+        alert("{{message}}");
+    </script>
+    {% endfor %} {% endif %}
+
+</body>
+
+</html>
